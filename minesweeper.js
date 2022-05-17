@@ -1,5 +1,5 @@
 //Javascript version of the classic Minesweeper game with mid-click functionality
-//At least one of opening all non-mines or flagging all 99 mines will be considered a win
+//Unique feature - at least one of opening all non-mines and flagging all 99 mines will be considered a win
 
 var gameOver = false;
 var gameWon = false;
