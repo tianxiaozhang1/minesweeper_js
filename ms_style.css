@@ -1,0 +1,64 @@
+#background {
+    height: 1070px;
+    width: 1778px;
+    background-color: #cacac4; /* (202, 202, 196) */
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.smiley {
+    width: 94px;
+    height: 94px;
+    background-color: red;
+    margin: 0 auto;
+}
+
+.board {
+    height: 946;
+    width: 1758;
+    background-color: #e8e8de; /* (232, 232, 222) */
+    /* border: 1px solid #e8e8de; */
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    /* pygame.draw.rect(screen, BOARD, pygame.Rect(10, 114, 1758, 946)) */
+}
+
+/*
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script type="application/javascript">
+            function draw() {
+                var canvas = document.getElementById('canvas');
+                    if (canvas.getContext) {
+                    var ctx = canvas.getContext('2d');
+            
+                    ctx.fillStyle = 'rgb(200, 200, 0)';
+                    ctx.fillRect(10, 10, 50, 50);
+            
+                    ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
+                    ctx.fillRect(30, 30, 50, 50);
+                }
+            }
+          </script>
+          
+        <title>Minesweeper</title>
+
+        <link rel="stylesheet" href="ms_style.css">
+        <script src="minesweeper.js"></script>
+    </head>
+
+    <body onload="draw();">
+        <canvas id = "background">
+        </canvas>
+    </body>
+</html>
+
+*/
