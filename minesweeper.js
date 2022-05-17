@@ -1,3 +1,6 @@
+//Javascript version of the classic Minesweeper game with mid-click functionality
+//At least one of opening all non-mines or flagging all 99 mines will be considered a win
+
 var gameOver = false;
 var gameWon = false;
 var minesNum = 99;
@@ -182,15 +185,14 @@ function mouseUp() {
     if (gameWon === false && gameOver === false) {
         if (click_pair.length === 1) {
             if (click_pair[0] === 1) {
-                //console.log("Left click", click_pair)
+                //Left click
                 leftClick(click_pos)
             } else {
+                //Right click
                 rightClick(click_pos)
-                //console.log("Right click", click_pair)
             }
         } else if (click_pair.length === 2) {
-            //click_pos = [click_pos[0], click_pos[1]]
-            ////console.log("Mid click when up?", click_pos)
+            //Mid click
             midClick(click_pos)
         } 
         click_pair = []
@@ -218,8 +220,8 @@ function mouseUp() {
 document.addEventListener('mousedown', (e) => {  
     if (e.clientX >= 850 && e.clientX <= 944 && e.clientY >= 18 && e.clientY <= 112) {
         switch (e.button) {
+            //Smiley clicked
             case 0:
-                //console.log("Smiley")
                 startGame();
                 break;
         }
@@ -228,30 +230,28 @@ document.addEventListener('mousedown', (e) => {
         if (gameOver == false && gameWon == false) {
             click_pos.push(Math.floor((e.clientY-132)/58), Math.floor((e.clientX-28)/58))
             switch (e.button) {
+
+                //Left mouse button clicked
                 case 0:
-                    click_pair.push(1) //Left mouse button clicked
-                    //console.log("Left down", click_pair)
+                    click_pair.push(1) 
                     if (click_pair.length === 2) {
-                        //console.log("Left down means mid click", click_pair, click_pos)
+                    
                         midClick(click_pos)
-                        //click_pair = []
-                        ////console.log("Mid good?")
                     }
                     break;
+
+                //Click wheel clicked
                 case 1:
                     click_pos = [click_pos[0], click_pos[1]]
-                    //console.log("Mid click when down", click_pos) //Middle mouse button clicked
                     midClick(click_pos)
                     break;
-
+                
+                //Right mouse button clicked
                 case 2:
                     click_pair.push(3) //Right mouse button clicked
                     //console.log("Right down", click_pair)
                     if (click_pair.length === 2) {
-                        //console.log("Right down means mid click", click_pair, click_pos)
                         midClick(click_pos)
-                        //click_pair = []
-                        ////console.log("Mid good?")
                     }
                     break;
             }   
@@ -260,7 +260,6 @@ document.addEventListener('mousedown', (e) => {
 });
 
 function leftClick(pair){
-    //console.log(click_pos)
 
     //If unopened
     if (clickMap[pair[0]][pair[1]] === 0) {
@@ -271,11 +270,6 @@ function leftClick(pair){
             }
             //Empty square => open up area
             if (numbers[pair[0]][pair[1]] === 0) {
-                //console.log("Empty square")
-
-                //clickMap[pair[0]][pair[1]] = 1
-                //drawNumber(0, pair[1], pair[0])
-                ////console.log("Show square")
                 showSquares(pair[0], pair[1])
             }
             //Singular square to open
@@ -298,8 +292,8 @@ function leftClick(pair){
                 }
             }
         }
-        else{ //Clicked mine - game over
-            //console.log(numbers[pair[0]][pair[1]], "Mine")
+        //Clicked mine - game over
+        else{ 
             //Show all mines
             for (let ir2 = 0; ir2 < 16; ir2++) {
                 for (let ic2 = 0; ic2 < 30; ic2++) {
@@ -330,7 +324,6 @@ function rightClick(pair){
         clickMap[pair[0]][pair[1]] = 2
         flaggedSq.push(pair)
         bigRedNumber(minesNum, 10, 10)
-        ////console.log(clickMap[0])
 
         //Possibly flagged all mines
         if (minesNum === 0) {
@@ -357,7 +350,6 @@ function rightClick(pair){
         flaggedSq = flaggedSq.filter(function(value, index, arr){
             return value !== pair
         })
-        ////console.log(clickMap[0])
     }
 }
 
@@ -372,12 +364,16 @@ function resetClickmap() {
 }
 
 function showSquares(sqx, sqy){
+    //When opening up an empty square
     var displayArea = [];
     var displayPoints = [];
     displayPoints.push(sqx*30+sqy)
     var fourWays = [[0,-1],[0,1],[-1,0],[1,0]];
     var allNeighbours = [];
 
+    //Find all connecting empty squares
+    //This part converts all square co-ordinates ([0,0] to [15, 29]) into serial numbers (0 to 479)
+    //And then back because it's easier to check the list
     roundsLeft = 16
     while (roundsLeft > 0) {
 
@@ -385,7 +381,6 @@ function showSquares(sqx, sqy){
             for (var x1 in fourWays) {
                 var sqax = Math.floor(displayPoints[i1]/30)
                 var sqay = displayPoints[i1]%30
-                ////console.log(sqax+fourWays[x1][0], sqay+fourWays[x1][1])
                 if (sqax+fourWays[x1][0] >= 0 && sqax+fourWays[x1][0] <= 15 && sqay+fourWays[x1][1] >= 0 && sqay+fourWays[x1][1] <= 29) {
                     if (numbers[sqax+fourWays[x1][0]][sqay+fourWays[x1][1]] === 0) {
                         if (((sqax+fourWays[x1][0])*30 + (sqay+fourWays[x1][1])) in displayPoints) {
@@ -406,8 +401,7 @@ function showSquares(sqx, sqy){
         displayArea.push([Math.floor(displayPoints[i1]/30), displayPoints[i1]%30])
     }
 
-    //console.log("LENGTH", displayArea.length)
-
+    //Find all neighbours of those empty squares
     for (var i2 in displayArea) {
         allNeighbours.push(displayArea[i2])
         if (displayArea[i2][0] >= 0 && displayArea[i2][0] <= 15 && displayArea[i2][1]-1 > 0 && displayArea[i2][1]-1 <= 29) {
@@ -435,6 +429,8 @@ function showSquares(sqx, sqy){
             allNeighbours.push([displayArea[i2][0]+1, displayArea[i2][1]+1])
         }
     }
+
+    //Add unique neighbours (the "shell")
     for (var i3 in allNeighbours) {
         if (numbers[allNeighbours[i3][0]][allNeighbours[i3][1]] > 0 && numbers[allNeighbours[i3][0]][allNeighbours[i3][1]] < 9 && !(allNeighbours[i3] in displayArea)) {
             displayArea.push(allNeighbours[i3])
@@ -442,8 +438,8 @@ function showSquares(sqx, sqy){
     }
 
     var displayArea = [ ...new Set(displayArea) ];
-    //console.log(displayArea)
 
+    //Display entire blank area + "shell"
     for (var i4 in displayArea) {
         if (clickMap[displayArea[i4][0]][displayArea[i4][1]] === 2 && !(numbers[displayArea[i4][0]][displayArea[i4][1]] === 9)) {
         }
@@ -453,6 +449,7 @@ function showSquares(sqx, sqy){
         }
     }
 
+    //Display the wrongly flagged non mines if lost
     if (gameOver === true) {
         for (let ir2 = 0; ir2 < 16; ir2++) {
             for (let ic2 = 0; ic2 < 30; ic2++) {
@@ -467,10 +464,12 @@ function showSquares(sqx, sqy){
 function midClick(pair) {
     if (clickMap[pair[0]][pair[1]] === 1) {
 
+        //Try to open up all neighbours when middle-clicking an opened number
         midNum = numbers[pair[0]][pair[1]]
         flagNum = 0
         flagged = []
 
+        //Check the number of flagged squares around
         for (let xx=pair[0]-1; xx<pair[0]+2; xx++) {
             for (let yy=pair[1]-1; yy<pair[1]+2; yy++) {
                 if (xx >= 0 && xx <= 15 && yy >= 0 && yy <= 29) {
@@ -484,19 +483,22 @@ function midClick(pair) {
                 }
             }
         }
-        //console.log("flagNum, midNum:", flagNum, midNum)
 
+        //Flags match the number of the square in question
         if (flagNum === midNum) {
             for (let xx=pair[0]-1; xx<pair[0]+2; xx++) {
                 for (let yy=pair[1]-1; yy<pair[1]+2; yy++) {
                     if (xx >= 0 && xx <= 15 && yy >= 0 && yy <= 29) {
                         if (xx === pair[0] && yy === pair[1]) {
                         } else {
+                            //Try to open up unopened squares
                             if (clickMap[xx][yy] === 0) {
+                                //Not a mine and not empty
                                 if (numbers[xx][yy] > 0 && numbers[xx][yy] < 9) {
                                     drawNumber(numbers[xx][yy], yy, xx)
                                     clickMap[xx][yy]=1
-
+                                    
+                                    //Won?
                                     count_of_1 = 0
                                     for (let xx1 = 0; xx1 < 16; xx1++) {
                                         for (let yy1 = 0; yy1 < 30; yy1++) {
@@ -508,6 +510,7 @@ function midClick(pair) {
                                     if (count_of_1 + staticMinesNum === 480) {
                                         gameWon = true
                                         gameOn = false
+                                        gameWonSmiley()
                                     }
                                 }
                                 //One of the neighbours is empty - need to check if there's more to open
@@ -549,6 +552,7 @@ function midClick(pair) {
                 }
             }
         }
+        //Flag number doesn't match number of square in question - light up the unopened as a reminder
         else {
             for (let xx=pair[0]-1; xx<pair[0]+2; xx++) {
                 for (let yy=pair[1]-1; yy<pair[1]+2; yy++) {
@@ -571,22 +575,6 @@ function midClick(pair) {
     }
 }
 
-// Add event listener on keydown
-document.addEventListener('keydown', (event) => {
-    var name = event.key;
-    minesNum--
-    bigRedNumber(minesNum, 10, 10)
-    if (gameOn === true) {
-        gameOn = false
-        ////console.log("gameOn just became false", gameOn)
-        timeElapsed = 0
-    } else {
-        gameOn = true
-        startGame();
-        //console.log("gameOn", gameOn)
-    }
-  }, false);
-
 setInterval(function() {
     if (gameOn === true) {
         timeElapsed = timeElapsed + (1/35)
@@ -595,16 +583,16 @@ setInterval(function() {
 }, 35); // update about every second
 
 document.addEventListener('mousemove', (event) => {
-    //if (gameOver === false) {
+    //Whenever mouse moves
     if (event.clientX >= 848 && event.clientX <= 942 && event.clientY >= 20 && event.clientY <= 114) {
         mouseHovering()
     } else {
         mouseOut()
     }
-    //}
 });
 
 function bigRedNumber(num, top, left){
+    //Both red clocks at top
     let first_d = Math.floor(num/100)
     let second_d_mid = Math.floor(num/100)
     let second_d = Math.floor((num - (second_d_mid*100))/10)
@@ -666,6 +654,7 @@ function mouseOut(){
 }
 
 function gameWonSmiley() {
+    //Game Won icon
     var smiley = canvas.getContext('2d');
     smiley.fillStyle = "rgb(202, 202, 196)"; //BACKGROUND
     smiley.fillRect(848, 16, 82, 82);
@@ -688,6 +677,7 @@ function gameWonSmiley() {
 }
 
 function gameOverSmiley() {
+    //Game over icon
     var smiley = canvas.getContext('2d');
     smiley.fillStyle = "rgb(202, 202, 196)"; //BACKGROUND
     smiley.fillRect(848, 16, 82, 82);
@@ -716,6 +706,7 @@ function gameOverSmiley() {
 }
 
 function normalSmiley(){
+    //Standard icon
     var smiley = canvas.getContext('2d');
     smiley.fillStyle = 'rgb(202, 202, 196)'; //Smiley background
     smiley.fillRect(848, 16, 82, 82);
@@ -758,6 +749,7 @@ function neighbours(row1, col1, mines){
 }
 
 function startGame() {
+    //Initial setup
     timeElapsed = 0;
     gameOver = false;
     gameWon = false;
@@ -834,8 +826,8 @@ function startGame() {
             clickMap[i][i] = 0;
         }
 
+        //For testing purpose - display the entire grid
         for (let row1 = 0; row1 < 16; row1++) {
             //console.log(numbers[row1])
         }
-
 }}
